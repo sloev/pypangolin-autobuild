@@ -115,6 +115,8 @@ jobs:
     steps:
     - name: "Checkout source code"
       uses: "actions/checkout@v3"
+      with:
+          token: ${{ secrets.REPO_SCOPED_TOKEN }}
     - name: Download wheels
       uses: actions/download-artifact@v4
       with:
@@ -129,11 +131,12 @@ jobs:
       run: |
         git config --global user.name 'sloev'
         git config --global user.email 'johannes.valbjorn@gmail.com'
-    
-    - name: make tag
-      run: |
+    -name: pull repo
+      run: | 
         git branch --show-current
         git pull
+    - name: make tag
+      run: |
         git tag -a "${{ steps.getversion.outputs.version }}" -m "Version ${{ steps.getversion.outputs.version }}"
         git push --follow-tags
 
@@ -143,3 +146,4 @@ jobs:
         name:  ${{ steps.getversion.outputs.version }}
         tag_name: ${{ steps.getversion.outputs.version }}
         files: wheels/*
+        token: ${{ secrets.REPO_SCOPED_TOKEN }}
