@@ -1,6 +1,7 @@
 name: Build pypangolin
 
 on: 
+  workflow_dispatch:
   push:
     paths:
       - 'releases/pypangolin_latest.txt'
@@ -47,7 +48,6 @@ jobs:
       env:
         HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
       run: |
-        echo "vcpkg location: $(which vcpkg)"
         echo "CMake toolchain file: $TOOLCHAIN_FILE"
         $GITHUB_WORKSPACE/scripts/install_prerequisites.sh -v -u -m ${{matrix.package_manager}} all
 
