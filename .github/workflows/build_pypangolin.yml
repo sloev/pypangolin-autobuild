@@ -11,6 +11,10 @@ defaults:
   run:
     shell: bash
 
+env:
+  BUILD_TYPE: Release
+
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -65,14 +69,14 @@ jobs:
       working-directory: ./src
       run: >
         cmake -G Ninja -B build
-        -D CMAKE_BUILD_TYPE=Release
+        -D CMAKE_BUILD_TYPE=$BUILD_TYPE
         -D CMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
         -D BUILD_SHARED_LIBS=${{ matrix.shared_libs }}
         -D BUILD_TESTS=ON
 
     - name: Build
       working-directory: ./src
-      run: cmake --build build --config Release
+      run: cmake --build build --config $BUILD_TYPE
 
     - name: Build Python wheel
       working-directory: ./src
