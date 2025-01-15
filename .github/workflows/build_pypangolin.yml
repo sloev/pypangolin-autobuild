@@ -49,7 +49,7 @@ jobs:
         HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
       run: |
         echo "CMake toolchain file: $TOOLCHAIN_FILE"
-        $GITHUB_WORKSPACE/scripts/install_prerequisites.sh -v -u -m ${{matrix.package_manager}} all
+        ./scripts/install_prerequisites.sh -v -u -m ${{matrix.package_manager}} all
 
 
     - name: Configure CMake
