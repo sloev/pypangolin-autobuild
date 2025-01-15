@@ -17,6 +17,10 @@ jobs:
       - name: Check for modified files
         id: git-check
         run: echo ::set-output name=modified::$([ -z "`git status --porcelain`" ] && echo "false" || echo "true")
+      - name: Read pypangolin_latest.txt file
+        id: getversion
+        run: echo "::set-output name=version::$(cat releases/pypangolin_latest.txt)"
+
       - name: Commit latest release version
         if: steps.git-check.outputs.modified == 'true'
         run: |

@@ -1,6 +1,6 @@
 name: Build pypangolin
 
-on: 
+on:
   workflow_dispatch:
   push:
     tags:
