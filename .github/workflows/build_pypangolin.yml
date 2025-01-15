@@ -44,7 +44,6 @@ jobs:
         ref: ${{ steps.getversion.outputs.version }}
         submodules: true
         fetch-depth: 0
-        path: src
         token: ${{ secrets.REPO_SCOPED_TOKEN }}
 
 
@@ -53,17 +52,15 @@ jobs:
       run: pip install --upgrade cython
 
     - name: Install Dependencies
-      working-directory: ./src
       env:
         HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
       run: |
         echo "vcpkg location: $(which vcpkg)"
         echo "CMake toolchain file: $TOOLCHAIN_FILE"
-        ./scripts/install_prerequisites.sh -v -u -m ${{matrix.package_manager}} all
+        $GITHUB_WORKSPACE/scripts/install_prerequisites.sh -v -u -m ${{matrix.package_manager}} all
 
 
     - name: Configure CMake
-      working-directory: ./src
       run: >
         cmake -G Ninja -B build
         -D CMAKE_BUILD_TYPE=$BUILD_TYPE
@@ -72,15 +69,12 @@ jobs:
         -D BUILD_TESTS=ON
 
     - name: Build
-      working-directory: ./src
       run: cmake --build build --config $BUILD_TYPE
 
     - name: Build Python wheel
-      working-directory: ./src
       run: cmake --build build -t pypangolin_wheel
 
     - name: Install Python wheel
-      working-directory: ./src
       env:
         PIP_BREAK_SYSTEM_PACKAGES: 1
       run: |
@@ -89,13 +83,11 @@ jobs:
         pip show pypangolin
 
     - name: Test Python wheel
-      working-directory: ./src
       if: ${{ !(matrix.package_manager == 'vcpkg' && matrix.shared_libs == 'ON') }}
       run: |
         python -c "import pypangolin"
 
     - name: Run all tests
-      working-directory: ./src
       run: |
         cmake --build build --target test
 
