@@ -23,4 +23,5 @@ jobs:
           git config --global user.name 'sloev'
           git config --global user.email 'johannes.valbjorn@gmail.com'
           git commit -am "New release version"
-          git push
+          git tag -a "${{ steps.getversion.outputs.version }}" -m "Version ${{ steps.getversion.outputs.version }}"
+          git push --follow-tags

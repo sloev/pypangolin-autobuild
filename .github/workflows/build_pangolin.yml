@@ -3,9 +3,7 @@ name: Build pypangolin
 on: 
   workflow_dispatch:
   push:
-    paths:
-      - 'releases/pypangolin_latest.txt'
-
+    tags:
 
 defaults:
   run:
@@ -121,24 +119,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: ./wheels
-        merge-multiple: true
 
     - name: Read pypangolin_latest.txt file
       id: getversion
       run: echo "::set-output name=version::$(cat releases/pypangolin_latest.txt)"
-
-    - name: setup git
-      run: |
-        git config --global user.name 'sloev'
-        git config --global user.email 'johannes.valbjorn@gmail.com'
-    - name: pull repo
-      run: |
-        git branch --show-current
-        git pull
-    - name: make tag
-      run: |
-        git tag -a "${{ steps.getversion.outputs.version }}" -m "Version ${{ steps.getversion.outputs.version }}"
-        git push --follow-tags
 
     - name: Release
       uses: softprops/action-gh-release@v2
