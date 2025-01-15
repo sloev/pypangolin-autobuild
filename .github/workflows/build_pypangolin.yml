@@ -52,7 +52,9 @@ jobs:
       run: | 
         pip install --upgrade pip
         pip install --break-system-packages --verbose cython
-        pip install --break-system-packages --verbose PyOpenGL-accelerate
+
+    - name: "patch cmake lists, see https://github.com/stevenlovegrove/Pangolin/commit/5d553a1250cde3698cae74c8376dfb6b04b7e74c#diff-5139570ff24765c77a3f34a2ab92ecf1e19ff3e4e6521529ec245ddfcba2bb6eL95"
+      run: sed 's/pyopengl-accelerate;//g' components/pango_python/CMakeLists.txt > components/pango_python/CMakeLists.txt
 
     - name: Install Dependencies
       env:
