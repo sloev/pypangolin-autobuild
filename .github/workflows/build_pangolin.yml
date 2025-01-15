@@ -119,9 +119,18 @@ jobs:
       with:
         path: ./wheels
         merge-multiple: true
+
     - name: Read pypangolin_latest.txt file
       id: getversion
       run: echo "::set-output name=version::$(cat releases/pypangolin_latest.txt)"
+
+    - name: git tag
+      run: |
+        git config --global user.name 'sloev'
+        git config --global user.email 'johannes.valbjorn@gmail.com'
+        git tag -a "${{ steps.getversion.outputs.version }}" -m "Version ${{ steps.getversion.outputs.version }}"
+			  git push --follow-tags
+
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
