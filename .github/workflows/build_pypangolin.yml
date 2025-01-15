@@ -49,7 +49,10 @@ jobs:
 
 
     - name: update cython
-      run: pip install --upgrade cython
+      run: | 
+        pip install --upgrade pip
+        pip install --break-system-packages --verbose cython
+        pip install --break-system-packages --verbose PyOpenGL-accelerate
 
     - name: Install Dependencies
       env:
