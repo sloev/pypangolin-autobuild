@@ -133,7 +133,7 @@ jobs:
     - name: make tag
       run: |
         git branch --show-current
-			  git pull
+        git pull
         git tag -a "${{ steps.getversion.outputs.version }}" -m "Version ${{ steps.getversion.outputs.version }}"
         git push --follow-tags
 
