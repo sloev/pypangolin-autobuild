@@ -22,7 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-22.04, ubuntu-24.04]
-        shared_libs: ['ON', 'OFF']
         include:
         - os: ubuntu-22.04
           package_manager: "apt"
@@ -72,7 +71,7 @@ jobs:
         cmake -G Ninja -B build
         -D CMAKE_BUILD_TYPE=$BUILD_TYPE
         -D CMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
-        -D BUILD_SHARED_LIBS=${{ matrix.shared_libs }}
+        -D BUILD_SHARED_LIBS=OFF
         -D BUILD_TESTS=ON
 
     - name: Build
@@ -90,7 +89,6 @@ jobs:
         pip show pypangolin
 
     - name: Test Python wheel
-      if: ${{ !(matrix.package_manager == 'vcpkg' && matrix.shared_libs == 'ON') }}
       run: |
         python -c "import pypangolin"
 
@@ -101,7 +99,7 @@ jobs:
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v4
       with:
-        name: "wheel_${{matrix.os}}_shared_libs_${{matrix.shared_libs}}"
+        name: "wheel_${{matrix.os}}"
         path: build/pypangolin-*.whl
         retention-days: 2
 
@@ -119,6 +117,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: ./wheels
+        merge-multiple: true
 
     - name: Read pypangolin_latest.txt file
       id: getversion
