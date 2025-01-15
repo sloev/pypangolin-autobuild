@@ -55,7 +55,7 @@ jobs:
         pip install --break-system-packages --verbose cython
 
     - name: "apply patch"
-      run: git git cherry-pick 5d553a1250cde3698cae74c8376dfb6b04b7e74c
+      run: git cherry-pick 5d553a1250cde3698cae74c8376dfb6b04b7e74c
 
     - name: Install Dependencies
       env:
