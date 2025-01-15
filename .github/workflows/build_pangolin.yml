@@ -131,8 +131,8 @@ jobs:
       run: |
         git config --global user.name 'sloev'
         git config --global user.email 'johannes.valbjorn@gmail.com'
-    -name: pull repo
-      run: | 
+    - name: pull repo
+      run: |
         git branch --show-current
         git pull
     - name: make tag
