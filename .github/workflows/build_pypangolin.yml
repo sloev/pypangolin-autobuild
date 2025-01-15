@@ -1,0 +1,90 @@
+name: Build pypangolin
+
+on: 
+  push:
+    paths:
+      - 'releases/pypangolin_latest.txt'
+
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+        shared_libs: ['ON', 'OFF']
+        include:
+        - os: ubuntu-22.04
+          package_manager: "apt"
+
+        - os: ubuntu-24.04
+          package_manager: "apt"
+
+    steps:
+    - name: "Checkout source code"
+      uses: "actions/checkout@v1"
+    - name: Read pypangolin_latest.txt file
+      id: getversion
+      run: echo "::set-output name=version::$(cat releases/pypangolin_latest.txt)"
+    - name: Checkout Pangolin
+      uses: actions/checkout@v4
+      with:
+        repository: 'stevenlovegrove/Pangolin'
+        ref: ${{ steps.getversion.outputs.version }}
+        submodules: true
+        fetch-depth: 0
+        path: src
+        token: ${{ secrets.REPO_SCOPED_TOKEN }}
+
+    - name: Install Dependencies
+      working-directory: ./src
+      env:
+        HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+      run: |
+        echo "vcpkg location: $(which vcpkg)"
+        echo "CMake toolchain file: $TOOLCHAIN_FILE"
+        $GITHUB_WORKSPACE/scripts/install_prerequisites.sh -v -u -m ${{matrix.package_manager}} all
+
+
+    - name: Configure CMake
+      working-directory: ./src
+      run: >
+        cmake -G Ninja -B build
+        -D CMAKE_BUILD_TYPE=Release
+        -D CMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE"
+        -D BUILD_SHARED_LIBS=${{ matrix.shared_libs }}
+        -D BUILD_TESTS=ON
+
+    - name: Build
+      working-directory: ./src
+      run: cmake --build build --config Release
+
+    - name: Build Python wheel
+      working-directory: ./src
+      run: cmake --build build -t pypangolin_wheel
+
+    - name: Install Python wheel
+      working-directory: ./src
+      env:
+        PIP_BREAK_SYSTEM_PACKAGES: 1
+      run: |
+        python -m zipfile --list build/pypangolin-*.whl
+        pip install build/pypangolin-*.whl
+        pip show pypangolin
+
+    - name: Test Python wheel
+      working-directory: ./src
+      if: ${{ !(matrix.package_manager == 'vcpkg' && matrix.shared_libs == 'ON') }}
+      run: |
+        python -c "import pypangolin"
+
+    - name: Run all tests
+      working-directory: ./src
+      run: |
+        cmake --build build --target test
