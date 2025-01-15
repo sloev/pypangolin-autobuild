@@ -1,3 +1,0 @@
-        LICENCE "MIT"
-        REQUIRES "pyopengl;pyopengl-accelerate;numpy;pillow;pybind11"
-        PRINT_HELP
