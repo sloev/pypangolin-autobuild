@@ -129,8 +129,9 @@ jobs:
       run: |
         git config --global user.name 'sloev'
         git config --global user.email 'johannes.valbjorn@gmail.com'
+    
     - name: make tag
-      run: | 
+      run: |
         git branch --show-current
 			  git pull
         git tag -a "${{ steps.getversion.outputs.version }}" -m "Version ${{ steps.getversion.outputs.version }}"
