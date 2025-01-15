@@ -42,7 +42,11 @@ jobs:
         fetch-depth: 0
         path: src
         token: ${{ secrets.REPO_SCOPED_TOKEN }}
-
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12' 
+    - name: update cython
+      run: pip install --upgrade cython
     - name: Install Dependencies
       working-directory: ./src
       env:
